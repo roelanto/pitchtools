@@ -1,11 +1,14 @@
 #' Return an anonymized patient label.
-#' 
+#'
 #' @param group The patient group of the patient.
 #' @param name The name of the patient.
 #' @param groups A vector with groups.
 #' @param names A list with group names and patients, see example.
+#' @export
 #' @return A string such as "Subject #12", where the numbering is consistent with the names list.
 #' @examples
+#' library(pitchtools)
+#'
 #' names <- list(
 #' alzheimer=c("A", "B", "C", "D I", "D II", "E"),
 #' control=c("A", "B I", "B II")

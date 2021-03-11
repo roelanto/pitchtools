@@ -1,3 +1,16 @@
+aggregateSpecsInRange <- function(range, type, specs) {
+  minrange <- min(range)
+  maxrange <- max(range)
+  specsofinterest <- specs[(specs$x > minrange) & (specs$x < maxrange), ]
+  #  message("i: ", i, " range: ", min(range), " - ", max(range))
+  if (type=="mean") {
+    mean(specsofinterest$y)
+  } else if (type == "max") {
+    suppressWarnings(max(specsofinterest$y))
+  }
+}
+
+
 findValInSpec <- function(object, start=-1, end=-1, type="mean", bands, freqrange) {
   # Calculate the number of cores
   vals <- vector()
@@ -8,17 +21,12 @@ findValInSpec <- function(object, start=-1, end=-1, type="mean", bands, freqrang
   #message("Call specs with start ", start, " end ", end)
   #message("Object ", length(object))
   #message("Freqrange ", freqrange)
-  specs <- as.data.frame(spec(object, flim=freqrange, from=start, to=end, plot=FALSE, norm=FALSE, scaled=FALSE))
+  specsmatrix <- spec(object, flim=freqrange, fftw=TRUE, from=start, to=end, plot=FALSE, norm=FALSE, scaled=FALSE)
+  specs <- as.data.frame(specsmatrix)
   #browser()
   vals <- sapply(c(1:(length(bands)-1)), function(i, type, bands) {
     range <- bandRange(bands, i)
-    #  message("i: ", i, " range: ", min(range), " - ", max(range))
-    if (type=="mean") {
-      mean(specs[(specs$x > min(range)) & (specs$x < max(range)), ]$y)
-    } else if (type == "max") {
-      max(specs[(specs$x > min(range)) & (specs$x < max(range)), ]$y)
-    }
-
+    aggregateSpecsInRange(range, type, specs)
   }, type=type, bands=bands)
   return(vals)
 }
